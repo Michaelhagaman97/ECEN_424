@@ -1,0 +1,12 @@
+Instructions:
+Michael Hagaman – Server, Client, Readme, Testing
+Layne Jackson - 
+Usage:
+To run the code please use the make file to compile. To run the server use ./server (IP address)(Port number)(Max Clients). To run a client use ./client (Username)(IP address)(Port Number). The server will print out status updates for when a client connects or error messages for when a username is taken/too many clients connected.
+Code:
+The server and client use the basic server commands to connect to each other. The server uses select to figure out which socket to read/write from. The server then accepts any client. After a client is accept the server check to make sure it as room for it by comparing the current number of clients to the max number of clients. When the server receives a message, it parses the SBCP header and looks to see if it is a JOIN call or a SEND call. The server receives the first join call and checks if the username is in use. If it is it will close the client connection. If not, it will add the username to a vector. When the server receives a SEND call it will FWD the message to all the clients connected expect for the client of origin. The client sends a JOIN call when it first connects to a server. After that the client uses select for read/write multiplexing. For write, it uses get line to fill the payload. After that I construct the header and send it to the server.  For read, I parse the message to extract the header information and the payload to display the information for the client. 
+Testing:
+I have a rare error in the client, when a client tries to reuse a username it will be disconnected from the server and sometimes it will crash. I tested the code as I wrote it to make sure that the server and client could communicate. Once the communication was working I tested the parser and header variables by sending/printing test messages from each client/server until it worked. 
+Bugs: 
+The client does not close properly sometimes causing  the client to loop infinitely when the server disconnects from the client due to the server being full or the username already being in use. When this happened i have to use Ctrl-C to kill the process. The server behaves correctly when dealing with the clients.
+Sources: Beej’s Guide to Network Programming, UNIX Network Programming Volume 1, Third Edition: The Sockets Networking API, GeeksforGeeks socket programing guide, cplusplus.com, and various Stack overflow pages. 
